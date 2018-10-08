@@ -48,7 +48,7 @@ The thousands of image patches are used to train an InceptionV3 model by running
 
 A tumor region heatmap for a pathology image can be generated using `./script/3_getHeatmap.py`:
 
-<img src="./assets/Figure2.jpg" alt="heatmap" width="300"/>
+<img src="./assets/Figure2.jpg" alt="heatmap" width="500"/>
 
 ### 4) Extract tumor shape features
 
