@@ -2,7 +2,7 @@
 library(survival)
 library(glmnet)
 setwd("//198.215.54.48/swan15/achen/survival_analysis")
-filename <- 'region_properties_slides_all_Shidan_v2.csv'
+filename <- 'region_properties_slides_all.csv'
 
 ##### NLST: training model #####
 # Please refer to 5_univariateAnalysisSlides_v3.R
@@ -42,16 +42,8 @@ filename <- 'region_properties_slides_all_Shidan_v2.csv'
 
 # select significant vars.
 features <- unicox_df$var
-#0.0007 = 0.05/72 performs well
-#sig_features <- features[which(unicox_df$pv <= 0.001)]
-#sig_features <- sig_features[12:24]
 sig_features <- features[which(unicox_df$pv <= 0.05)]
 sig_features <- sig_features[c(20:28, 30:35)]
-#sig_features <- sig_features[c(25:32, 34:39)]
-#sig_features <- sig_features[15:28]
-#sig_features <- sig_features[c(1:2, 15:30)] #0.001
-#sig_features <- sig_features[c(1:2, 25:43)] #0.05
-#sig_features <- sig_features[c(1:2, 14:27)] #0.0007
 surv <- Surv(dat_combine[, "time"], dat_combine[, "status"])
 model <- coxph(surv ~ ., data = dat_combine[, sig_features])
 
@@ -86,8 +78,6 @@ if (length(to.remove) > 0){
             family = "cox", alpha = 0.5, standardize=T)$lambda.min
 }
 coef(model2, s = c(0.01, 0.014, 0.02, 0.022, 0.03, 0.04))
-# Save model
-save(model2, sig_features, file = "glmnet_model_v3.RData")
 
 ##### TCGA: testing model #####
 # Read in data
@@ -112,60 +102,9 @@ dat_combine_TCGA <- dat_combine_TCGA[which(dat_combine_TCGA$stage %in% c("Stage 
 
 surv_TCGA <- Surv(dat_combine_TCGA$time, dat_combine_TCGA$status)
 
-#### Check p/a^2
-paRatio <- dat_combine_TCGA$total_perimeter_2^2/dat_combine_TCGA$total_filled_area_2
-dat_combine_TCGA$total_pa_ratio_2 <- paRatio
-paRatio <- dat_combine_TCGA$main_perimeter_2^2/dat_combine_TCGA$main_filled_area_2
-dat_combine_TCGA$main_pa_ratio_2 <- paRatio
-coxph(surv_TCGA ~ paRatio, data = dat_combine_TCGA)
-
-# Set group = tumor_percent < 0.7, and only keep the first tissue patch
-#group_TCGA <- which(dat_combine_TCGA$tumor_percent <= 0.5)
-group_TCGA <- 1:dim(dat_combine_TCGA)[1]
-
 # test model
-#### Model 1: coxph ####
-risk <- predict(model, dat_combine_TCGA)
-summary(coxph(surv_TCGA ~ risk))
-risk_high <- risk >= median(risk, na.rm = T)
-sf <- survfit(surv_TCGA ~ risk_high)
-plot(sf, col = c("green", "red"), mark = 3)
-summary(coxph(surv_TCGA ~ risk_high))
-
-
-#### Model 2: coxph with elastic net ####
 risk <- predict(model2, newx = as.matrix(dat_combine_TCGA[, sig_features]), s = 0.014)
 summary(coxph(surv_TCGA ~ risk))
-
-#### mclust ####
-library(mclust)
-hist(risk, breaks = 50)
-mc <- Mclust(risk, G=2, model="E")
-risk_high <- mc$classification == 2
-table(risk_high)
-
-dens <- densityMclust(risk)
-br <- seq(min(risk), max(risk), length = 30)
-plot(dens, what = "density", data = risk, breaks = br)
-dens$BIC
-summary(dens, parameters = T)
-#### end of mclust
-
-#### plot for mclust ####
-#BIC
-BIC <- mclustBIC(risk)
-#pdf("../writing/mCluster_BIC.pdf", 5, 5)
-plot(BIC)
-#dev.off()
-
-source("//198.215.54.48/swan15/R/myfunctions/mclust.hist.plot.R")
-#pdf("../writing/mCluster_hist.pdf", 5, 5)
-mc2 <- mclust.hist.plot(risk, xlab = "Risk Score", model = "V", G = 3, breaks = 40, ylim = c(0, 0.8))
-legend(1.0, 0.8, legend = c("Low Risk", "high Risk"), col = mc2[[2]], pch = 15, bty = "n")
-risk_high <- mc2[[1]]$classification == 2
-table(risk_high)
-#dev.off()
-#### end of plot for mclust 
 
 #### figures ####
 risk_high <- risk > median(risk, na.rm = T)
@@ -185,12 +124,6 @@ summary(coxph(surv_TCGA ~ risk_high))
 survdiff(surv_TCGA ~ risk_high)
 survdiff(surv_TCGA ~ risk_high, rho = 2)
 
-## without transfer (Stage IV); performance didn't improve
-sf <- survfit(surv_TCGA[which(dat_combine_TCGA$stage != "Stage IV"), ] ~ risk_high[which(dat_combine_TCGA$stage != "Stage IV")])
-plot(sf, col = c("green", "red"), mark = 3, xlab = "Time (Days)", ylab = "Survival Probability")
-legend(3000, 0.9, legend = c("Low Risk", "High Risk"), col = c("green", "red"), lty = 1, bty = "n")
-survdiff(surv_TCGA[which(dat_combine_TCGA$stage != "Stage IV"), ] ~ risk_high[which(dat_combine_TCGA$stage != "Stage IV")])
-
 ## multivariate analysis
 summary(coxph(surv_TCGA ~ risk_high + dat_combine_TCGA$age + dat_combine_TCGA$gender + dat_combine_TCGA$tobacco + dat_combine_TCGA$stage))
 summary(coxph(surv_TCGA ~ risk + dat_combine_TCGA$age + dat_combine_TCGA$gender + dat_combine_TCGA$tobacco + dat_combine_TCGA$stage))
@@ -206,4 +139,4 @@ to.save$tobacco <- dat_combine_TCGA$tobacco
 to.save$stage <- dat_combine_TCGA$stage
 to.save$time <- surv_TCGA[, 1]
 to.save$event <- surv_TCGA[, 2]
-#write.csv(to.save, file = "risk_score_clinical_vars_TCGA_v2.csv", row.names = F)
+#write.csv(to.save, file = "risk_score_clinical_vars_TCGA", row.names = F)
