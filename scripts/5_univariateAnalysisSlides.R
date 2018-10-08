@@ -1,6 +1,6 @@
 library(survival)
 setwd("//198.215.54.48/swan15/achen/survival_analysis")
-filename <- 'region_properties_slides_all_Shidan.csv'
+filename <- 'region_properties_slides_all.csv'
 
 ##### NLST #####
 # Read in data
