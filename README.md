@@ -2,6 +2,8 @@
 
 Co-first Author: Shidan Wang, [QBRC](https://qbrc.swmed.edu/) & Alyssa Chen
 
+Contact: sdw95927@gmail.com
+
 Scripts for https://www.nature.com/articles/s41598-018-27707-4, _Comprehensive analysis of lung cancer pathology images to discover tumor shape and boundary features that predict survival outcome_.
 
 ![Flowchart](./assets/Figure1.JPG)
