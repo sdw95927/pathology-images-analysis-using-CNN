@@ -5,7 +5,7 @@ setwd("//198.215.54.48/swan15/achen/survival_analysis")
 filename <- 'region_properties_slides_all.csv'
 
 ##### NLST: training model #####
-# Please refer to 5_univariateAnalysisSlides_v3.R
+# # Please refer to 5_univariateAnalysisSlides.R
 # # Read in data
 # dat <- read.csv(paste("../1_NLST_heatmap/", filename, sep = ""))
 # 
@@ -28,7 +28,6 @@ filename <- 'region_properties_slides_all.csv'
 # }
 # 
 # # Set group = tumor_percent < 0.7, and only keep the first tissue patch
-# #group <- which(dat_combine$tumor_percent <= 0.8)
 # group <- 1:dim(dat_combine)[1]
 # 
 # # Univariate cox model
