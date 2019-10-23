@@ -10,7 +10,7 @@ Scripts for https://www.nature.com/articles/s41598-018-27707-4, _Comprehensive a
 
 ## Citation 
 
-Wang, S., Chen, A., Yang, L., Cai, L., Xie, Y., Fujimoto, J., ... & Xiao, G. (2018). Comprehensive analysis of lung cancer pathology images to discover tumor shape features that predict survival outcome. bioRxiv, 274332.
+Wang, Shidan, Alyssa Chen, Lin Yang, Ling Cai, Yang Xie, Junya Fujimoto, Adi Gazdar, and Guanghua Xiao. "Comprehensive analysis of lung cancer pathology images to discover tumor shape and boundary features that predict survival outcome." _Scientific reports_ 8, no. 1 (2018): 10393.
 
 ## This repository includes
 
