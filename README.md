@@ -17,6 +17,7 @@ Wang, Shidan, Alyssa Chen, Lin Yang, Ling Cai, Yang Xie, Junya Fujimoto, Adi Gaz
 * A scripts folder
 * An README file
 * Pathology images that support the findings of this study are available online in [NLST](https://biometry.nci.nih.gov/cdas/nlst/) and [The Cancer Genome Atlas Lung Adenocarcinoma (TCGA-LUAD)](https://wiki.cancerimagingarchive.net/display/Public/TCGA-LUAD).
+* The weights (.h5) file can be downloaded from https://drive.google.com/file/d/1zdrLQXypAd-XI1KQ0KOdjMqkfrxvQU7F/view?usp=sharing
 
 ## Requirements
 
